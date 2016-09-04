@@ -20,12 +20,12 @@ public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter {
     }
 
     @Override
-    public void getUserInfo() {
-        mUserInfoModel.getUserInfo();
+    public void getUserInfo(String name) {
+        mUserInfoModel.getUserInfo(name);
     }
 
     @Override
     public void start() {
-        mUserInfoView.setUserInfo();
+//        mUserInfoView.setUserInfo();
     }
 }

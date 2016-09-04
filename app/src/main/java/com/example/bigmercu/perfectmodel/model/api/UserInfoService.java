@@ -1,7 +1,6 @@
 package com.example.bigmercu.perfectmodel.model.api;
 
-import com.example.bigmercu.perfectmodel.entity.UserInfoEntity;
-
+import okhttp3.ResponseBody;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
@@ -13,5 +12,5 @@ import rx.Observable;
 
 public interface UserInfoService {
     @GET("users/{user}")
-    Observable<UserInfoEntity> getUserInfo(@Path("user") String user);
+    Observable<ResponseBody> getUserInfo(@Path("user") String user);
 }

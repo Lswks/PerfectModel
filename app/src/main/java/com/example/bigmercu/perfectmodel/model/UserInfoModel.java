@@ -6,5 +6,5 @@ package com.example.bigmercu.perfectmodel.model;
  */
 
 public interface UserInfoModel {
-    void getUserInfo();
+    void getUserInfo(String name);
 }

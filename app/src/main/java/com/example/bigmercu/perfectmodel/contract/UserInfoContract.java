@@ -10,10 +10,10 @@ import com.example.bigmercu.perfectmodel.base.BaseView;
 
 public interface UserInfoContract {
     interface UserInfoPresenter extends BasePresenter{
-        void getUserInfo();
+        void getUserInfo(String name);
     }
 
     interface UserInfoView extends BaseView<UserInfoPresenter>{
-        void setUserInfo();
+        void setUserInfo(String name);
     }
 }

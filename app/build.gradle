@@ -38,4 +38,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'com.squareup.sqlbrite:sqlbrite:0.7.0'
+    provided group: 'com.google.auto.value', name: 'auto-value', version: '1.3'
+    apt group: 'com.google.auto.value', name: 'auto-value', version: '1.3'
+    apt 'com.ryanharter.auto.value:auto-value-gson:0.4.2'
+    provided 'com.ryanharter.auto.value:auto-value-gson:0.4.2'
 }
