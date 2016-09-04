@@ -22,8 +22,8 @@ WHERE login = ?;
 
 UPDATE_INFO_FOR_USER:
 UPDATE github_user
-SET login = ?,
-    avatar_url = ?,
+SET  login = ?,
+     avatar_url = ?,
      url = ?,
      blog = ?,
      location = ?,

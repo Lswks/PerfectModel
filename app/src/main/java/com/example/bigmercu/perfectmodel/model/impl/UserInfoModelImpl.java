@@ -19,6 +19,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -57,53 +58,72 @@ public class UserInfoModelImpl implements UserInfoModel {
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
 
-        Observable.just(name)
-                .subscribeOn(Schedulers.io())
-                .map(new Func1<String, GithubUser>() {
+        final boolean[] isUpdate = {false};
+
+        final Observable mObservableDb = Observable.create(new Observable.OnSubscribe<GithubUser>() {
+            @Override
+            public void call(Subscriber<? super GithubUser> subscriber) {
+                List<GithubUser> list = mDbOperating.query(mReadSQLiteDatabase, name);
+                if(list.size() >0){
+                    subscriber.onNext(list.get(0));
+                }
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io());
+
+
+
+         Observable mObservableRemote = mUserInfoService.getUserInfo(name)
+                 .subscribeOn(Schedulers.io())
+                 .map(new Func1<ResponseBody,GithubUser>() {
+                     @Override
+                     public GithubUser call(ResponseBody responseBody) {
+                         try {
+                             return mGson.fromJson(responseBody.string(), GithubUser.class);
+                         } catch (IOException e) {
+                             e.printStackTrace();
+                         }
+                         return null;
+                     }
+                 })
+                 .doOnNext(new Action1<GithubUser>() {
+                     @Override
+                     public void call(GithubUser githubUser) {
+                         //TODO 缓存策略 优化代码 sqlbright
+                         if(isUpdate[0]){
+                             Log.d(TAG,"update");
+                             mDbOperating.update(mWriteSQLiteDatabase,githubUser);
+                         }else {
+                             Log.d(TAG,"insert");
+                             mDbOperating.insert(mWriteSQLiteDatabase, githubUser);
+                         }
+                     }
+                 })
+                 .unsubscribeOn(Schedulers.io());
+
+
+//
+        Observable.concat(mObservableDb,mObservableRemote)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GithubUser>() {
                     @Override
-                    public GithubUser call(String s) {
-                        List<GithubUser> list = mDbOperating.query(mReadSQLiteDatabase, name);
-                        if (list.size() == 0) {
-                            mUserInfoService.getUserInfo(s)
-                                    .map(new Func1<ResponseBody, GithubUser>() {
-                                        @Override
-                                        public GithubUser call(ResponseBody responseBody) {
-                                            try {
-                                                mGithubUser = mGson.fromJson(responseBody.string(), GithubUser.class);
-                                                mDbOperating.insert(mWriteSQLiteDatabase,mGithubUser);
-                                                return mGithubUser;
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            return null;
-                                        }
-                                    }).subscribe(new Action1<GithubUser>() {
-                                @Override
-                                public void call(GithubUser githubUser) {
-                                    mGithubUser = githubUser;
-                                }
-                            });
-                        } else {
-                            mGithubUser = list.get(0);
-                        }
-                        return mGithubUser;
+                    public void onCompleted() {
+                        Log.d(TAG,"onCompleted");
                     }
-                }).subscribe(new Subscriber<GithubUser>() {
-            @Override
-            public void onCompleted() {
-                Log.d(TAG,"onCompleted");
-            }
 
-            @Override
-            public void onError(Throwable e) {
-                listener.onFiled(e.getMessage());
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onFiled(e.getMessage());
+                    }
 
-            @Override
-            public void onNext(GithubUser githubUser) {
-                listener.onSuccess(githubUser);
-            }
-        });
+                    @Override
+                    public void onNext(GithubUser githubUser) {
+                        if(githubUser != null){
+                            isUpdate[0] = true;
+                        }
+                        listener.onSuccess(githubUser);
+                    }
+                });
     }
 
     @Override

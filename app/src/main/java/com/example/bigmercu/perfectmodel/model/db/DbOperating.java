@@ -34,12 +34,33 @@ public class DbOperating {
                 .asContentValues());
     }
 
-    public List<GithubUser> query(SQLiteDatabase db, String name) {
+    public List<GithubUser> query(SQLiteDatabase mDb, String name) {
         List<GithubUser> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery(GithubUser.SELECT_BY_LOGIN, new String[]{name});
+        Cursor cursor = mDb.rawQuery(GithubUser.SELECT_BY_LOGIN, new String[]{name});
         while (cursor.moveToNext()) {
             list.add(GithubUser.MAPPER.map(cursor));
         }
         return list;
     }
+
+
+    public void update(SQLiteDatabase mDb,GithubUser mUser){
+        mDb.execSQL(GithubUser.UPDATE_INFO_FOR_USER,new String[]{
+            mUser.login(),
+            mUser.avatar_url(),
+            mUser.url(),
+            mUser.blog(),
+            mUser.location(),
+            String.valueOf(mUser.public_repos()),
+            String.valueOf(mUser.followers()),
+            String.valueOf(mUser.following()),
+            mUser.email(),
+            mUser.bio(),
+            mUser.repos_url(),
+            mUser.name(),
+            mUser.created_at(),
+            String.valueOf(mUser.id())
+        });
+    }
+
 }

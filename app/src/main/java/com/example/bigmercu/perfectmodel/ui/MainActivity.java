@@ -2,9 +2,9 @@ package com.example.bigmercu.perfectmodel.ui;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bigmercu.perfectmodel.R;
@@ -27,6 +27,9 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @BindView(R.id.editText)
     EditText mEditText;
+
+    @BindView(R.id.name)
+    TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @Override
     public void setUserInfo(GithubUser mGithubUser) {
-        Log.d(TAG,mGithubUser.toString());
+        mTextView.setText(mGithubUser.name());
     }
 
     @Override
