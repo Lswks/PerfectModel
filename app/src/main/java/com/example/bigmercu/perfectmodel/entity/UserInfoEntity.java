@@ -71,10 +71,10 @@ public abstract class UserInfoEntity {
     @Nullable @SerializedName("email") public abstract String email();
     @Nullable @SerializedName("hireable") public abstract Object hireable();
     @Nullable @SerializedName("bio") public abstract String bio();
-    @SerializedName("public_repos") public abstract int public_repos();
+    @SerializedName("public_repos") public abstract long public_repos();
     @SerializedName("public_gists") public abstract int public_gists();
-    @SerializedName("followers") public abstract int followers();
-    @SerializedName("following") public abstract int following();
+    @SerializedName("followers") public abstract long followers();
+    @SerializedName("following") public abstract long following();
     @Nullable @SerializedName("created_at") public abstract String created_at();
     @Nullable @SerializedName("updated_at") public abstract String updated_at();
 
