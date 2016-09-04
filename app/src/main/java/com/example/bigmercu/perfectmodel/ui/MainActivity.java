@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
         mUserInfoPresenter.getUserInfo("bigmercu");
     }
 
+
     @Override
     public void setUserInfo(String name) {
 
