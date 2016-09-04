@@ -2,6 +2,7 @@ package com.example.bigmercu.perfectmodel.contract;
 
 import com.example.bigmercu.perfectmodel.base.BasePresenter;
 import com.example.bigmercu.perfectmodel.base.BaseView;
+import com.example.bigmercu.perfectmodel.model.db.GithubUser;
 
 /**
  * Created by bigmercu on 2016/9/3.
@@ -14,6 +15,7 @@ public interface UserInfoContract {
     }
 
     interface UserInfoView extends BaseView<UserInfoPresenter>{
-        void setUserInfo(String name);
+        void setUserInfo(GithubUser mGithubUser);
+        void onFiled(String msg);
     }
 }

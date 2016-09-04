@@ -1,12 +1,11 @@
 package com.example.bigmercu.perfectmodel.model.impl;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.bigmercu.perfectmodel.entity.UserInfoEntity;
 import com.example.bigmercu.perfectmodel.model.UserInfoModel;
 import com.example.bigmercu.perfectmodel.model.api.UserInfoService;
+import com.example.bigmercu.perfectmodel.model.db.DbOperating;
 import com.example.bigmercu.perfectmodel.model.db.GithubUser;
 import com.example.bigmercu.perfectmodel.model.db.GithubUserHepler;
 import com.example.bigmercu.perfectmodel.util.MyAdapterFactory;
@@ -15,11 +14,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
-import rx.android.schedulers.AndroidSchedulers;
+import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -32,81 +31,86 @@ import rx.schedulers.Schedulers;
 public class UserInfoModelImpl implements UserInfoModel {
 
     private static final String TAG = UserInfoModelImpl.class.getSimpleName();
-    private SQLiteDatabase mSQLiteDatabase;
     private UserInfoService mUserInfoService;
-    Gson mGson=  new GsonBuilder().registerTypeAdapterFactory(MyAdapterFactory.create())
-                                .create();
+    private Gson mGson;
+    private DbOperating mDbOperating;
+    private SQLiteDatabase mWriteSQLiteDatabase;
+    private SQLiteDatabase mReadSQLiteDatabase;
+    private GithubUser mGithubUser;
 
-    public static UserInfoModelImpl getInstance(){
+    public static UserInfoModelImpl getInstance() {
         return UserInfoModelImplInstanceHolder.userInfoModel;
     }
 
-    public static class UserInfoModelImplInstanceHolder{
+    public static class UserInfoModelImplInstanceHolder {
         private static UserInfoModelImpl userInfoModel = new UserInfoModelImpl();
     }
 
-    public UserInfoModelImpl(){
+    public UserInfoModelImpl() {
         mUserInfoService = RetrofitClient.getInstance().create(UserInfoService.class);
-//        mSQLiteDatabase = SQLiteDatabase.openOrCreateDatabase("GithubUser.db",);
+        mDbOperating = new DbOperating();
+        mGson = new GsonBuilder().registerTypeAdapterFactory(MyAdapterFactory.create()).create();
+        mWriteSQLiteDatabase = GithubUserHepler.gitInstance().getWritableDatabase();
+        mReadSQLiteDatabase = GithubUserHepler.gitInstance().getReadableDatabase();
     }
 
     @Override
-    public void getUserInfo(String name) {
-        mUserInfoService.getUserInfo(name)
+    public void getUserInfo(final String name, final onGetDataListener listener) {
+
+        Observable.just(name)
                 .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<ResponseBody, UserInfoEntity>() {
+                .map(new Func1<String, GithubUser>() {
                     @Override
-                    public UserInfoEntity call(ResponseBody responseBody) {
-                        try {
-                            return mGson.fromJson(responseBody.string(),UserInfoEntity.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    public GithubUser call(String s) {
+                        List<GithubUser> list = mDbOperating.query(mReadSQLiteDatabase, name);
+                        if (list.size() == 0) {
+                            mUserInfoService.getUserInfo(s)
+                                    .map(new Func1<ResponseBody, GithubUser>() {
+                                        @Override
+                                        public GithubUser call(ResponseBody responseBody) {
+                                            try {
+                                                mGithubUser = mGson.fromJson(responseBody.string(), GithubUser.class);
+                                                mDbOperating.insert(mWriteSQLiteDatabase,mGithubUser);
+                                                return mGithubUser;
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                            return null;
+                                        }
+                                    }).subscribe(new Action1<GithubUser>() {
+                                @Override
+                                public void call(GithubUser githubUser) {
+                                    mGithubUser = githubUser;
+                                }
+                            });
+                        } else {
+                            mGithubUser = list.get(0);
                         }
-                        return null;
+                        return mGithubUser;
                     }
-                }).subscribe(new Action1<UserInfoEntity>() {
+                }).subscribe(new Subscriber<GithubUser>() {
             @Override
-            public void call(UserInfoEntity userInfoEntity) {
-                SQLiteDatabase db = GithubUserHepler.gitInstance().getWritableDatabase();
-                insert(db,userInfoEntity);
-                db.close();
-                List<GithubUser> list = new ArrayList<GithubUser>();
-                SQLiteDatabase db1 = GithubUserHepler.gitInstance().getReadableDatabase();
-                list = query(db1,"Bigmercu");
-                Log.d(TAG,list.toString());
+            public void onCompleted() {
+                Log.d(TAG,"onCompleted");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                listener.onFiled(e.getMessage());
+            }
+
+            @Override
+            public void onNext(GithubUser githubUser) {
+                listener.onSuccess(githubUser);
             }
         });
     }
 
-
-    public void insert(SQLiteDatabase mDb, UserInfoEntity mUser){
-        mDb.insert(GithubUser.TABLE_NAME,null,GithubUser.FACTORY.marshal()
-                .avatar_url(mUser.avatar_url())
-                .bio(mUser.bio())
-                .blog(mUser.blog())
-                .email(mUser.email())
-                .followers(mUser.followers())
-                .following(mUser.following())
-                .id(mUser.id())
-                .location(mUser.location())
-                .created_at(mUser.created_at())
-                .name(mUser.name())
-                .public_repos(mUser.public_repos())
-                .login(mUser.login())
-                .url(mUser.url())
-                .repos_url(mUser.repos_url())
-                .asContentValues());
+    @Override
+    public void onCancle() {
+        if (mWriteSQLiteDatabase != null)
+            mWriteSQLiteDatabase.close();
+        if (mReadSQLiteDatabase != null)
+            mReadSQLiteDatabase.close();
     }
-
-    public List<GithubUser> query(SQLiteDatabase db,String name){
-        List<GithubUser> list = new ArrayList<>();
-        Cursor cursor = db.rawQuery(GithubUser.SELECT_BY_LOGIN,new String[]{name});
-        while (cursor.moveToNext()){
-            list.add(GithubUser.MAPPER.map(cursor));
-        }
-        return list;
-    }
-
 }

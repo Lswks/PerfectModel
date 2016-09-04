@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import com.example.bigmercu.perfectmodel.GithubUserModel;
 import com.google.auto.value.AutoValue;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.squareup.sqldelight.RowMapper;
 
 /**
@@ -24,5 +26,10 @@ public abstract class GithubUser implements GithubUserModel {
                     followers,following,email,bio,repos_url,name,created_at);
         }
     });
+
+    public static TypeAdapter<GithubUser> typeAdapter(final Gson gson){
+        return new AutoValue_GithubUser.GsonTypeAdapter(gson);
+    }
+
     public static final RowMapper<GithubUser> MAPPER = FACTORY.select_by_loginMapper();
 }

@@ -1,6 +1,8 @@
 package com.example.bigmercu.perfectmodel.presenter;
 
 import com.example.bigmercu.perfectmodel.contract.UserInfoContract;
+import com.example.bigmercu.perfectmodel.model.UserInfoModel;
+import com.example.bigmercu.perfectmodel.model.db.GithubUser;
 import com.example.bigmercu.perfectmodel.model.impl.UserInfoModelImpl;
 
 /**
@@ -8,7 +10,7 @@ import com.example.bigmercu.perfectmodel.model.impl.UserInfoModelImpl;
  * Email: bigmercu@gmail.com
  */
 
-public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter {
+public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter,UserInfoModel.onGetDataListener{
 
     UserInfoContract.UserInfoView mUserInfoView;
     UserInfoModelImpl mUserInfoModel;
@@ -21,11 +23,21 @@ public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter {
 
     @Override
     public void getUserInfo(String name) {
-        mUserInfoModel.getUserInfo(name);
+        mUserInfoModel.getUserInfo(name,this);
     }
 
     @Override
     public void start() {
 //        mUserInfoView.setUserInfo();
+    }
+
+    @Override
+    public void onSuccess(GithubUser mGithubUser) {
+        mUserInfoView.setUserInfo(mGithubUser);
+    }
+
+    @Override
+    public void onFiled(String msg) {
+        mUserInfoView.onFiled(msg);
     }
 }
