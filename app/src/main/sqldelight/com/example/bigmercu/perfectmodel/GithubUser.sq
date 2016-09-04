@@ -1,0 +1,38 @@
+CREATE TABLE github_user (
+  id INTEGER NOT NULL PRIMARY KEY,
+  login TEXT NOT NULL,
+  avatar_url TEXT,
+  url TEXT,
+  blog TEXT,
+  location TEXT,
+  public_repos INTEGER,
+  followers INTEGER,
+  following INTEGER,
+  email TEXT,
+  bio TEXT,
+  repos_url TEXT,
+  name TEXT,
+  created_at TEXT
+);
+
+select_by_login:
+SELECT *
+FROM github_user
+WHERE login = ?;
+
+UPDATE_INFO_FOR_USER:
+UPDATE github_user
+SET login = ?,
+    avatar_url = ?,
+     url = ?,
+     blog = ?,
+     location = ?,
+     public_repos = ?,
+     followers = ?,
+     following = ?,
+     email = ?,
+     bio = ?,
+     repos_url = ?,
+     name = ?,
+     created_at = ?
+WHERE id = ?;
