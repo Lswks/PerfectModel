@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.bigmercu.perfectmodel.base.ContextHolder;
+import com.example.bigmercu.perfectmodel.util.ContextHolder;
 
 /**
  * Created by bigmercu on 2016/9/4.

@@ -2,6 +2,7 @@ package com.example.bigmercu.perfectmodel.base;
 
 import android.app.Application;
 
+import com.example.bigmercu.perfectmodel.util.ContextHolder;
 import com.facebook.stetho.Stetho;
 
 /**

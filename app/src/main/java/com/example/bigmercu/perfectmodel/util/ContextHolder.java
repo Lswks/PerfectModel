@@ -1,4 +1,4 @@
-package com.example.bigmercu.perfectmodel.base;
+package com.example.bigmercu.perfectmodel.util;
 
 import android.content.Context;
 

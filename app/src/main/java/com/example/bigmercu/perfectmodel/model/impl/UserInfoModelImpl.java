@@ -7,6 +7,7 @@ import com.example.bigmercu.perfectmodel.model.UserInfoModel;
 import com.example.bigmercu.perfectmodel.model.api.UserInfoService;
 import com.example.bigmercu.perfectmodel.model.db.GithubUser;
 import com.example.bigmercu.perfectmodel.model.db.GithubUserHepler;
+import com.example.bigmercu.perfectmodel.util.ApiErrorEntry;
 import com.example.bigmercu.perfectmodel.util.MyAdapterFactory;
 import com.example.bigmercu.perfectmodel.util.RetrofitClient;
 import com.google.gson.Gson;
@@ -17,6 +18,8 @@ import com.squareup.sqlbrite.SqlBrite;
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
+import retrofit2.adapter.rxjava.HttpException;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -133,10 +136,31 @@ public class UserInfoModelImpl implements UserInfoModel {
                  })
                  .unsubscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new Action1<GithubUser>() {
+                 .subscribe(new Subscriber<GithubUser>() {
                      @Override
-                     public void call(GithubUser githubUser) {
-                         Log.d(TAG,"git remote data" + githubUser.toString());
+                     public void onCompleted() {
+
+                     }
+                     @Override
+                     public void onError(Throwable e) {
+                         if(e instanceof HttpException){
+                             HttpException exception = (HttpException) e;
+                             ApiErrorEntry apiErrorEntry = null;
+                             try {
+                                 apiErrorEntry = mGson.fromJson(exception
+                                         .response()
+                                         .errorBody()
+                                         .string(),
+                                         ApiErrorEntry.class);
+                                 listener.onFiled(apiErrorEntry.toString());
+                             } catch (IOException e1) {
+                                 e1.printStackTrace();
+                             }
+                         }
+                     }
+                     @Override
+                     public void onNext(GithubUser githubUser) {
+                         Log.d(TAG,githubUser.toString());
                      }
                  });
     }

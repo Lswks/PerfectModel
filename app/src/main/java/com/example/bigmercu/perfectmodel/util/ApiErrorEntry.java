@@ -29,4 +29,10 @@ public class ApiErrorEntry {
     public void setDocumentation_url(String documentation_url) {
         this.documentation_url = documentation_url;
     }
+
+    @Override
+    public String toString() {
+        return "Error Message:" + message + '\n' +
+                "Documentation Url:" + documentation_url;
+    }
 }

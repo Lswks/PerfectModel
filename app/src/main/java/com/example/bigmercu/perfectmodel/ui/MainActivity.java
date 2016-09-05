@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @OnClick(R.id.button)
     public void setButtonClick(){
-        Toast.makeText(getApplicationContext(),"click",Toast.LENGTH_SHORT).show();
-        mUserInfoPresenter.getUserInfo("Bigmercu");
+        if(mTextView.getText() != null)
+            mUserInfoPresenter.getUserInfo(String.valueOf(mEditText.getText()));
     }
 
 
@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @Override
     public void setUserInfo(GithubUser mGithubUser) {
-        mTextView.setText(mGithubUser.name());
+        mTextView.setText(mGithubUser.toString());
     }
 
     @Override
     public void onFiled(String msg) {
-        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
     }
 }
