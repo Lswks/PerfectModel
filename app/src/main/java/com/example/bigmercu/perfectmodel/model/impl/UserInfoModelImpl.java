@@ -1,24 +1,23 @@
 package com.example.bigmercu.perfectmodel.model.impl;
 
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.example.bigmercu.perfectmodel.model.UserInfoModel;
 import com.example.bigmercu.perfectmodel.model.api.UserInfoService;
-import com.example.bigmercu.perfectmodel.model.db.DbOperating;
 import com.example.bigmercu.perfectmodel.model.db.GithubUser;
 import com.example.bigmercu.perfectmodel.model.db.GithubUserHepler;
 import com.example.bigmercu.perfectmodel.util.MyAdapterFactory;
 import com.example.bigmercu.perfectmodel.util.RetrofitClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.squareup.sqlbrite.BriteDatabase;
+import com.squareup.sqlbrite.SqlBrite;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.ResponseBody;
-import rx.Observable;
-import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -34,10 +33,10 @@ public class UserInfoModelImpl implements UserInfoModel {
     private static final String TAG = UserInfoModelImpl.class.getSimpleName();
     private UserInfoService mUserInfoService;
     private Gson mGson;
-    private DbOperating mDbOperating;
-    private SQLiteDatabase mWriteSQLiteDatabase;
-    private SQLiteDatabase mReadSQLiteDatabase;
+    private BriteDatabase mBriteDatabase;
     private GithubUser mGithubUser;
+    private Subscription mLocalDataSubscription;
+    private Subscription mRemoteDataSubscription;
 
     public static UserInfoModelImpl getInstance() {
         return UserInfoModelImplInstanceHolder.userInfoModel;
@@ -49,31 +48,37 @@ public class UserInfoModelImpl implements UserInfoModel {
 
     public UserInfoModelImpl() {
         mUserInfoService = RetrofitClient.getInstance().create(UserInfoService.class);
-        mDbOperating = new DbOperating();
         mGson = new GsonBuilder().registerTypeAdapterFactory(MyAdapterFactory.create()).create();
-        mWriteSQLiteDatabase = GithubUserHepler.gitInstance().getWritableDatabase();
-        mReadSQLiteDatabase = GithubUserHepler.gitInstance().getReadableDatabase();
+
+        SqlBrite sqlBrite = SqlBrite.create();
+
+        mBriteDatabase = sqlBrite.wrapDatabaseHelper(GithubUserHepler.gitInstance(),Schedulers.io());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
 
         final boolean[] isUpdate = {false};
 
-        final Observable mObservableDb = Observable.create(new Observable.OnSubscribe<GithubUser>() {
-            @Override
-            public void call(Subscriber<? super GithubUser> subscriber) {
-                List<GithubUser> list = mDbOperating.query(mReadSQLiteDatabase, name);
-                if(list.size() >0){
-                    subscriber.onNext(list.get(0));
-                }
-                subscriber.onCompleted();
-            }
-        }).subscribeOn(Schedulers.io());
+        mLocalDataSubscription = mBriteDatabase
+                .createQuery(GithubUser.TABLE_NAME, GithubUser.SELECT_BY_LOGIN, new String[]{name})
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<SqlBrite.Query>() {
+                    @Override
+                    public void call(SqlBrite.Query query) {
+                        Log.d(TAG,"success udpate data");
+                        Cursor cursor = query.run();
+                        while (cursor.moveToNext()) {
+                            mGithubUser = GithubUser.MAPPER.map(cursor);
+                        }
+                        if(mGithubUser != null){
+                            listener.onSuccess(mGithubUser);
+                        }
+                    }
+                });
 
-
-
-         Observable mObservableRemote = mUserInfoService.getUserInfo(name)
+        mRemoteDataSubscription = mUserInfoService.getUserInfo(name)
                  .subscribeOn(Schedulers.io())
                  .map(new Func1<ResponseBody,GithubUser>() {
                      @Override
@@ -90,47 +95,63 @@ public class UserInfoModelImpl implements UserInfoModel {
                      @Override
                      public void call(GithubUser githubUser) {
                          //TODO 缓存策略 优化代码 sqlbright
-                         if(isUpdate[0]){
-                             Log.d(TAG,"update");
-                             mDbOperating.update(mWriteSQLiteDatabase,githubUser);
+                         if(mGithubUser != null){
+                             mBriteDatabase.update(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
+                                     .avatar_url(githubUser.avatar_url())
+                                     .bio(githubUser.bio())
+                                     .blog(githubUser.blog())
+                                     .email(githubUser.email())
+                                     .followers(githubUser.followers())
+                                     .following(githubUser.following())
+                                     .location(githubUser.location())
+                                     .created_at(githubUser.created_at())
+                                     .name(githubUser.name())
+                                     .public_repos(githubUser.public_repos())
+                                     .login(githubUser.login())
+                                     .url(githubUser.url())
+                                     .repos_url(githubUser.repos_url())
+                                     .asContentValues(),"id=?", String.valueOf(githubUser.id()));
                          }else {
-                             Log.d(TAG,"insert");
-                             mDbOperating.insert(mWriteSQLiteDatabase, githubUser);
+                             mBriteDatabase.insert(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
+                                     .avatar_url(githubUser.avatar_url())
+                                     .bio(githubUser.bio())
+                                     .blog(githubUser.blog())
+                                     .email(githubUser.email())
+                                     .followers(githubUser.followers())
+                                     .following(githubUser.following())
+                                     .id(githubUser.id())
+                                     .location(githubUser.location())
+                                     .created_at(githubUser.created_at())
+                                     .name(githubUser.name())
+                                     .public_repos(githubUser.public_repos())
+                                     .login(githubUser.login())
+                                     .url(githubUser.url())
+                                     .repos_url(githubUser.repos_url())
+                                     .asContentValues());
                          }
                      }
                  })
-                 .unsubscribeOn(Schedulers.io());
-
-
-//
-        Observable.concat(mObservableDb,mObservableRemote)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GithubUser>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d(TAG,"onCompleted");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        listener.onFiled(e.getMessage());
-                    }
-
-                    @Override
-                    public void onNext(GithubUser githubUser) {
-                        if(githubUser != null){
-                            isUpdate[0] = true;
-                        }
-                        listener.onSuccess(githubUser);
-                    }
-                });
+                 .unsubscribeOn(Schedulers.io())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(new Action1<GithubUser>() {
+                     @Override
+                     public void call(GithubUser githubUser) {
+                         Log.d(TAG,"git remote data" + githubUser.toString());
+                     }
+                 });
     }
 
     @Override
     public void onCancle() {
-        if (mWriteSQLiteDatabase != null)
-            mWriteSQLiteDatabase.close();
-        if (mReadSQLiteDatabase != null)
-            mReadSQLiteDatabase.close();
+        if(mLocalDataSubscription != null && !mLocalDataSubscription.isUnsubscribed()){
+            mLocalDataSubscription.unsubscribe();
+        }
+
+        if(mRemoteDataSubscription != null && !mRemoteDataSubscription.isUnsubscribed()){
+            mLocalDataSubscription.unsubscribe();
+        }
+        mBriteDatabase.close();
+        mGson = null;
+        mGithubUser = null;
     }
 }
