@@ -61,7 +61,7 @@ public class UserInfoModelImpl implements UserInfoModel {
     @SuppressWarnings("unchecked")
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
-
+        //TODO 缓存策略 优化代码
         final boolean[] isUpdate = {false};
 
         mLocalDataSubscription = mBriteDatabase
@@ -70,7 +70,6 @@ public class UserInfoModelImpl implements UserInfoModel {
                 .subscribe(new Action1<SqlBrite.Query>() {
                     @Override
                     public void call(SqlBrite.Query query) {
-                        Log.d(TAG,"success udpate data");
                         Cursor cursor = query.run();
                         while (cursor.moveToNext()) {
                             mGithubUser = GithubUser.MAPPER.map(cursor);
@@ -97,7 +96,6 @@ public class UserInfoModelImpl implements UserInfoModel {
                  .doOnNext(new Action1<GithubUser>() {
                      @Override
                      public void call(GithubUser githubUser) {
-                         //TODO 缓存策略 优化代码 sqlbright
                          if(mGithubUser != null){
                              mBriteDatabase.update(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
                                      .avatar_url(githubUser.avatar_url())
