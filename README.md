@@ -13,4 +13,4 @@ Android MVP Perfect Model practice with github APIv3.
 - 新浪微博: [@bigmercu](http://weibo.com/bigmercu)
 - Email: bigmercu@gmail.com
 
-> 完成度 50%
+> 完成度 60%
