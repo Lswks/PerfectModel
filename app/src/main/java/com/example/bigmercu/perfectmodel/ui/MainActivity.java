@@ -29,7 +29,25 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
     EditText mEditText;
 
     @BindView(R.id.name)
-    TextView mTextView;
+    TextView mName;
+
+    @BindView(R.id.bio)
+    TextView mbio;
+
+    @BindView(R.id.blog)
+    TextView mBlog;
+
+    @BindView(R.id.created_at)
+    TextView mCreatedAt;
+
+    @BindView(R.id.email)
+    TextView mEmail;
+
+    @BindView(R.id.location)
+    TextView mLocation;
+
+    @BindView(R.id.repos)
+    TextView mRepos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @OnClick(R.id.button)
     public void setButtonClick(){
-        if(mTextView.getText() != null)
+        if(mName.getText() != null)
             mUserInfoPresenter.getUserInfo(String.valueOf(mEditText.getText()));
     }
 
@@ -54,7 +72,13 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
 
     @Override
     public void setUserInfo(GithubUser mGithubUser) {
-        mTextView.setText(mGithubUser.toString());
+        mName.setText(mGithubUser.name() + "(" + mGithubUser.login() + ")");
+        mbio.setText(mGithubUser.bio());
+        mBlog.setText(mGithubUser.blog());
+        mLocation.setText(mGithubUser.location());
+        mEmail.setText(mGithubUser.email());
+        mCreatedAt.setText(mGithubUser.created_at());
+        mRepos.setText(mGithubUser.public_repos().toString());
     }
 
     @Override
