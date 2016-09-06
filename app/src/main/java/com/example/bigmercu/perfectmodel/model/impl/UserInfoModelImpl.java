@@ -63,8 +63,98 @@ public class UserInfoModelImpl implements UserInfoModel {
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
         //TODO 缓存策略 优化代码
-        final boolean[] isUpdate = {false};
 
+        getLocalData(name,listener);
+        getRemoteData(name,listener);
+    }
+
+
+    private void  getRemoteData(String name, final onGetDataListener listener){
+        mRemoteDataSubscription = mUserInfoService.getUserInfo(name)
+                .subscribeOn(Schedulers.io())
+                .map(new Func1<ResponseBody,GithubUser>() {
+                    @Override
+                    public GithubUser call(ResponseBody responseBody) {
+                        try {
+                            return mGson.fromJson(responseBody.string(), GithubUser.class);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+                })
+                .doOnNext(new Action1<GithubUser>() {
+                    @Override
+                    public void call(GithubUser githubUser) {
+                        if(mGithubUser != null){
+                            mBriteDatabase.update(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
+                                    .avatar_url(githubUser.avatar_url())
+                                    .bio(githubUser.bio())
+                                    .blog(githubUser.blog())
+                                    .email(githubUser.email())
+                                    .followers(githubUser.followers())
+                                    .following(githubUser.following())
+                                    .location(githubUser.location())
+                                    .created_at(githubUser.created_at())
+                                    .name(githubUser.name())
+                                    .public_repos(githubUser.public_repos())
+                                    .login(githubUser.login())
+                                    .url(githubUser.url())
+                                    .repos_url(githubUser.repos_url())
+                                    .asContentValues(),"id=?", String.valueOf(githubUser.id()));
+                        }else {
+                            mBriteDatabase.insert(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
+                                    .avatar_url(githubUser.avatar_url())
+                                    .bio(githubUser.bio())
+                                    .blog(githubUser.blog())
+                                    .email(githubUser.email())
+                                    .followers(githubUser.followers())
+                                    .following(githubUser.following())
+                                    .id(githubUser.id())
+                                    .location(githubUser.location())
+                                    .created_at(githubUser.created_at())
+                                    .name(githubUser.name())
+                                    .public_repos(githubUser.public_repos())
+                                    .login(githubUser.login())
+                                    .url(githubUser.url())
+                                    .repos_url(githubUser.repos_url())
+                                    .asContentValues(), SQLiteDatabase.CONFLICT_IGNORE);
+                        }
+                    }
+                })
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<GithubUser>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d(TAG,"complete");
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        if(e instanceof HttpException){
+                            HttpException exception = (HttpException) e;
+                            ApiErrorEntry apiErrorEntry = null;
+                            try {
+                                apiErrorEntry = mGson.fromJson(exception
+                                                .response()
+                                                .errorBody()
+                                                .string(),
+                                        ApiErrorEntry.class);
+                                listener.onFiled(apiErrorEntry.toString());
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                    @Override
+                    public void onNext(GithubUser githubUser) {
+                        mGithubUser = githubUser;
+                    }
+                });
+    }
+
+
+    private void  getLocalData(String name, final onGetDataListener listener){
         mLocalDataSubscription = mBriteDatabase
                 .createQuery(GithubUser.TABLE_NAME, GithubUser.SELECT_BY_LOGIN, new String[]{name})
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,88 +171,6 @@ public class UserInfoModelImpl implements UserInfoModel {
                         }
                     }
                 });
-
-        mRemoteDataSubscription = mUserInfoService.getUserInfo(name)
-                 .subscribeOn(Schedulers.io())
-                 .map(new Func1<ResponseBody,GithubUser>() {
-                     @Override
-                     public GithubUser call(ResponseBody responseBody) {
-                         try {
-                             return mGson.fromJson(responseBody.string(), GithubUser.class);
-                         } catch (IOException e) {
-                             e.printStackTrace();
-                         }
-                         return null;
-                     }
-                 })
-                 .doOnNext(new Action1<GithubUser>() {
-                     @Override
-                     public void call(GithubUser githubUser) {
-                         if(mGithubUser != null){
-                             mBriteDatabase.update(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
-                                     .avatar_url(githubUser.avatar_url())
-                                     .bio(githubUser.bio())
-                                     .blog(githubUser.blog())
-                                     .email(githubUser.email())
-                                     .followers(githubUser.followers())
-                                     .following(githubUser.following())
-                                     .location(githubUser.location())
-                                     .created_at(githubUser.created_at())
-                                     .name(githubUser.name())
-                                     .public_repos(githubUser.public_repos())
-                                     .login(githubUser.login())
-                                     .url(githubUser.url())
-                                     .repos_url(githubUser.repos_url())
-                                     .asContentValues(),"id=?", String.valueOf(githubUser.id()));
-                         }else {
-                             mBriteDatabase.insert(GithubUser.TABLE_NAME,GithubUser.FACTORY.marshal()
-                                     .avatar_url(githubUser.avatar_url())
-                                     .bio(githubUser.bio())
-                                     .blog(githubUser.blog())
-                                     .email(githubUser.email())
-                                     .followers(githubUser.followers())
-                                     .following(githubUser.following())
-                                     .id(githubUser.id())
-                                     .location(githubUser.location())
-                                     .created_at(githubUser.created_at())
-                                     .name(githubUser.name())
-                                     .public_repos(githubUser.public_repos())
-                                     .login(githubUser.login())
-                                     .url(githubUser.url())
-                                     .repos_url(githubUser.repos_url())
-                                     .asContentValues(), SQLiteDatabase.CONFLICT_IGNORE);
-                         }
-                     }
-                 })
-                 .unsubscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe(new Subscriber<GithubUser>() {
-                     @Override
-                     public void onCompleted() {
-                         Log.d(TAG,"complete");
-                     }
-                     @Override
-                     public void onError(Throwable e) {
-                         if(e instanceof HttpException){
-                             HttpException exception = (HttpException) e;
-                             ApiErrorEntry apiErrorEntry = null;
-                             try {
-                                 apiErrorEntry = mGson.fromJson(exception
-                                         .response()
-                                         .errorBody()
-                                         .string(),
-                                         ApiErrorEntry.class);
-                                 listener.onFiled(apiErrorEntry.toString());
-                             } catch (IOException e1) {
-                                 e1.printStackTrace();
-                             }
-                         }
-                     }
-                     @Override
-                     public void onNext(GithubUser githubUser) {
-                         mGithubUser = githubUser;
-                     }
-                 });
     }
 
     @Override

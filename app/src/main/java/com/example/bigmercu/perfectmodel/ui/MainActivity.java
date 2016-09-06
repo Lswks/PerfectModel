@@ -85,4 +85,5 @@ public class MainActivity extends AppCompatActivity implements UserInfoContract.
     public void onFiled(String msg) {
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
     }
+
 }

@@ -21,6 +21,7 @@ public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter,Use
         mUserInfoView.setPresenter(this);
     }
 
+
     @Override
     public void getUserInfo(String name) {
         mUserInfoModel.getUserInfo(name,this);
