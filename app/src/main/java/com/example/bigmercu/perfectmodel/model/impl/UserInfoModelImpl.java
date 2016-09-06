@@ -1,6 +1,7 @@
 package com.example.bigmercu.perfectmodel.model.impl;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.example.bigmercu.perfectmodel.model.UserInfoModel;
@@ -75,6 +76,7 @@ public class UserInfoModelImpl implements UserInfoModel {
                             mGithubUser = GithubUser.MAPPER.map(cursor);
                         }
                         if(mGithubUser != null){
+                            Log.d(TAG,"local data:  " + mGithubUser.toString());
                             listener.onSuccess(mGithubUser);
                         }
                     }
@@ -128,7 +130,7 @@ public class UserInfoModelImpl implements UserInfoModel {
                                      .login(githubUser.login())
                                      .url(githubUser.url())
                                      .repos_url(githubUser.repos_url())
-                                     .asContentValues());
+                                     .asContentValues(), SQLiteDatabase.CONFLICT_IGNORE);
                          }
                      }
                  })
@@ -137,7 +139,7 @@ public class UserInfoModelImpl implements UserInfoModel {
                  .subscribe(new Subscriber<GithubUser>() {
                      @Override
                      public void onCompleted() {
-
+                         Log.d(TAG,"complete");
                      }
                      @Override
                      public void onError(Throwable e) {
@@ -158,7 +160,7 @@ public class UserInfoModelImpl implements UserInfoModel {
                      }
                      @Override
                      public void onNext(GithubUser githubUser) {
-                         Log.d(TAG,githubUser.toString());
+                         mGithubUser = githubUser;
                      }
                  });
     }
