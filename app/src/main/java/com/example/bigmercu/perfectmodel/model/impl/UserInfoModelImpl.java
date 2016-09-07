@@ -63,9 +63,17 @@ public class UserInfoModelImpl implements UserInfoModel {
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
         //TODO 缓存策略 优化代码
+        if(mLocalDataSubscription != null && !mLocalDataSubscription.isUnsubscribed()){
+            mLocalDataSubscription.unsubscribe();
+        }
+
+        if(mRemoteDataSubscription != null && !mRemoteDataSubscription.isUnsubscribed()){
+            mLocalDataSubscription.unsubscribe();
+        }
 
         getLocalData(name,listener);
         getRemoteData(name,listener);
+
     }
 
 
@@ -149,9 +157,14 @@ public class UserInfoModelImpl implements UserInfoModel {
                     @Override
                     public void onNext(GithubUser githubUser) {
                         mGithubUser = githubUser;
+                        listener.onSuccess(githubUser);
                     }
                 });
     }
+
+/**
+ * 因为名字不断在变 所以不能...
+ * */
 
 
     private void  getLocalData(String name, final onGetDataListener listener){

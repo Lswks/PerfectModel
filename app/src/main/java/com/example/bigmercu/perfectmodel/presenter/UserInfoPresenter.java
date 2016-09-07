@@ -12,8 +12,8 @@ import com.example.bigmercu.perfectmodel.model.impl.UserInfoModelImpl;
 
 public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter,UserInfoModel.onGetDataListener{
 
-    UserInfoContract.UserInfoView mUserInfoView;
-    UserInfoModelImpl mUserInfoModel;
+    private UserInfoContract.UserInfoView mUserInfoView;
+    private UserInfoModelImpl mUserInfoModel;
 
     public UserInfoPresenter(UserInfoContract.UserInfoView view){
         this.mUserInfoView = view;
