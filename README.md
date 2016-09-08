@@ -1,8 +1,28 @@
 # PerfectModel
 Android MVP Perfect Model practice with github APIv3.
 
+> 完成度 61%
+
 # 引言
 之前看北京GDG直播收获颇丰,这两天抽时间用Github API来实践一下[Piasy](https://github.com/Piasy)提出的完美model.
+
+#相关文章
+
+
+# 用的到repo
+
+*包括但不限于*
+
+- [AutoValue](http://github.com/google/auto)
+- [Sqlbrite](https://github.com/square/sqlbrite)
+- [Sqldelight](https://github.com/square/sqldelight)
+- [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+- [RxJava](https://github.com/ReactiveX/RxJava)
+- [Retrofit](http://square.github.io/retrofit/)
+- [Gson](https://github.com/google/gson)
+- [auto-value-gson](https://github.com/rharter/auto-value-gson)
+- [Butterknife](https://github.com/JakeWharton/butterknife)
+
 
 # 架构图
 > [引用from pisay 博客](http://blog.piasy.com/2016/05/06/Perfect-Android-Model-Layer/)
@@ -13,4 +33,4 @@ Android MVP Perfect Model practice with github APIv3.
 - 新浪微博: [@bigmercu](http://weibo.com/bigmercu)
 - Email: bigmercu@gmail.com
 
-> 完成度 60%
+
