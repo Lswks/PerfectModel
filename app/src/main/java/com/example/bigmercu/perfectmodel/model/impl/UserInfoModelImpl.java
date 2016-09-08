@@ -63,6 +63,14 @@ public class UserInfoModelImpl implements UserInfoModel {
     @Override
     public void getUserInfo(final String name, final onGetDataListener listener) {
         //TODO 缓存策略 优化代码
+        unsubscrib();
+
+        getLocalData(name,listener);
+        getRemoteData(name,listener);
+
+    }
+
+    private void unsubscrib() {
         if(mLocalDataSubscription != null && !mLocalDataSubscription.isUnsubscribed()){
             mLocalDataSubscription.unsubscribe();
         }
@@ -70,10 +78,6 @@ public class UserInfoModelImpl implements UserInfoModel {
         if(mRemoteDataSubscription != null && !mRemoteDataSubscription.isUnsubscribed()){
             mLocalDataSubscription.unsubscribe();
         }
-
-        getLocalData(name,listener);
-        getRemoteData(name,listener);
-
     }
 
 
@@ -188,13 +192,7 @@ public class UserInfoModelImpl implements UserInfoModel {
 
     @Override
     public void onCancle() {
-        if(mLocalDataSubscription != null && !mLocalDataSubscription.isUnsubscribed()){
-            mLocalDataSubscription.unsubscribe();
-        }
-
-        if(mRemoteDataSubscription != null && !mRemoteDataSubscription.isUnsubscribed()){
-            mLocalDataSubscription.unsubscribe();
-        }
+        unsubscrib();
         mBriteDatabase.close();
         mGson = null;
         mGithubUser = null;

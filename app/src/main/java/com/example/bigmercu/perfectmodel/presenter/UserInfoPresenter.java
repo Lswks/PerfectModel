@@ -2,8 +2,7 @@ package com.example.bigmercu.perfectmodel.presenter;
 
 import com.example.bigmercu.perfectmodel.contract.UserInfoContract;
 import com.example.bigmercu.perfectmodel.model.UserInfoModel;
-import com.example.bigmercu.perfectmodel.model.db.GithubUser;
-import com.example.bigmercu.perfectmodel.model.impl.UserInfoModelImpl;
+import com.example.bigmercu.perfectmodel.model.impl.SearchRepoModelImpl;
 
 /**
  * Created by bigmercu on 2016/9/3.
@@ -13,18 +12,21 @@ import com.example.bigmercu.perfectmodel.model.impl.UserInfoModelImpl;
 public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter,UserInfoModel.onGetDataListener{
 
     private UserInfoContract.UserInfoView mUserInfoView;
-    private UserInfoModelImpl mUserInfoModel;
+//    private UserInfoModelImpl mUserInfoModel;
+    private SearchRepoModelImpl mSearchRepoModel;
 
     public UserInfoPresenter(UserInfoContract.UserInfoView view){
         this.mUserInfoView = view;
-        mUserInfoModel = UserInfoModelImpl.getInstance();
+//        mUserInfoModel = UserInfoModelImpl.getInstance();
+        mSearchRepoModel = SearchRepoModelImpl.getInstance();
         mUserInfoView.setPresenter(this);
     }
 
 
     @Override
     public void getUserInfo(String name) {
-        mUserInfoModel.getUserInfo(name,this);
+//        mSearchRepoModel.searchRepoModel();
+//        mUserInfoModel.getUserInfo(name,this);
     }
 
     @Override
@@ -33,8 +35,8 @@ public class UserInfoPresenter implements UserInfoContract.UserInfoPresenter,Use
     }
 
     @Override
-    public void onSuccess(GithubUser mGithubUser) {
-        mUserInfoView.setUserInfo(mGithubUser);
+    public void onSuccess(Object entry) {
+//        mUserInfoView.setUserInfo(mGithubUser);
     }
 
     @Override
