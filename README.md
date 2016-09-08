@@ -13,6 +13,11 @@ Android MVP Perfect Model practice with github APIv3.
 
 >[完美的安卓 model 层架构（下）](http://blog.piasy.com/2016/05/12/Perfect-Android-Model-Layer-2/)
 
+我写的:
+
+[完美Model之AutoValue使用](http://bigmercu.top/2016/09/08/%E5%AE%8C%E7%BE%8EModel%E4%B9%8BAutoValue%E4%BD%BF%E7%94%A8/)
+
+
 # 用的到repo
 
 *包括但不限于*
