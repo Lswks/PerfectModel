@@ -7,7 +7,11 @@ Android MVP Perfect Model practice with github APIv3.
 之前看北京GDG直播收获颇丰,这两天抽时间用Github API来实践一下[Piasy](https://github.com/Piasy)提出的完美model.
 
 #相关文章
+> Piasy前辈的:
 
+> [完美的安卓 model 层架构（上）](http://blog.piasy.com/2016/05/06/Perfect-Android-Model-Layer/)
+
+>[完美的安卓 model 层架构（下）](http://blog.piasy.com/2016/05/12/Perfect-Android-Model-Layer-2/)
 
 # 用的到repo
 
