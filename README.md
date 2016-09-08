@@ -37,6 +37,9 @@ Android MVP Perfect Model practice with github APIv3.
 > [引用from pisay 博客](http://blog.piasy.com/2016/05/06/Perfect-Android-Model-Layer/)
 > ![架构图](http://blog.piasy.com/img/201605/perfect_android_model_layer.png)
 
+# 现阶段截图
+![screenShot](http://ww2.sinaimg.cn/mw690/b45f56f6gw1f7mb4vick5j20u01hcjvr.jpg)
+
 ---
 # AboutMe
 - 新浪微博: [@bigmercu](http://weibo.com/bigmercu)
