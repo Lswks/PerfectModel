@@ -3,4 +3,6 @@
     <color name="colorPrimary">#136c86</color>
     <color name="colorPrimaryDark">#115e75</color>
     <color name="colorAccent">#eb4f38</color>
+    <color name="star_bg">#c3c3c3</color>
+    <color name="search_bg">#e7e7e7</color>
 </resources>

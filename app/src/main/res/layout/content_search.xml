@@ -12,28 +12,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.bigmercu.perfectmodel.ui.SearchActivity"
-    tools:showIn="@layout/activity_search">
+    tools:showIn="@layout/activity_search"
+    android:orientation="vertical">
+
+    <!--<TextView-->
+        <!--android:id="@+id/promptText"-->
+        <!--android:text="@string/repo"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:textSize="20sp"-->
+        <!--android:typeface="monospace"-->
+        <!--android:textStyle="normal|italic"-->
+        <!--android:textAlignment="center"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginLeft="11dp"-->
+        <!--android:layout_marginStart="11dp"/>-->
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/repos"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
-
-    <TextView
-        android:id="@+id/promptText"
-        android:text="@string/repo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:typeface="monospace"
-        android:textStyle="normal|italic"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:layout_centerVertical="true"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp"/>
+        android:layout_alignParentStart="true">
+    </android.support.v7.widget.RecyclerView>
 
 </RelativeLayout>

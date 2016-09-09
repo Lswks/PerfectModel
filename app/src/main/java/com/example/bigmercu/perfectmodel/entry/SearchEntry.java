@@ -15,10 +15,14 @@ import java.util.List;
  */
 
 @AutoValue
-public abstract class SearchEntry {
+public abstract class SearchEntry{
 
    @SerializedName("total_count") abstract int total_count();
    @SerializedName("incomplete_results") abstract boolean incomplete_results();
+
+    abstract String name();
+    abstract int id();
+
 
     abstract List<ItemsBean> items();
 

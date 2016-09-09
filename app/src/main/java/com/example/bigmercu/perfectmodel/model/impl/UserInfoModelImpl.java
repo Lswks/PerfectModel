@@ -188,6 +188,8 @@ public class UserInfoModelImpl implements UserInfoModel {
                         }
                     }
                 });
+
+
     }
 
     @Override

@@ -68,6 +68,7 @@ public class SearchRepoModelImpl implements SearchRepoModel {
                     @Override
                     public void call(SearchEntry searchEntry) {
                         listener.onSuccess(searchEntry);
+                        listener.onSuccess(searchEntry);
                     }
                 }, new Action1<Throwable>() {
                     @Override

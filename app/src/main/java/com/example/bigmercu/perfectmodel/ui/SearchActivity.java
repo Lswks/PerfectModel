@@ -4,26 +4,32 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.bigmercu.perfectmodel.R;
 import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
+import com.example.bigmercu.perfectmodel.ui.adapter.RepoAdapter;
 
 import butterknife.BindView;
 
 public class SearchActivity extends AppCompatActivity implements SearchRepoContract.SearchRepoView {
+
+    public static final int VIWE_TYPE_SEARCH = 1;
+    public static final int VIWE_TYPE_NULL = 2;
+    public static final int VIWE_TYPE_CONTENT = 3;
 
     private SearchRepoContract.SearchRepoPresenter mSearchRepoPresenter;
 
     @BindView(R.id.repos)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.promptText)
-    TextView mTextView;
+
+    private RepoAdapter mRepoAdapter;
+    private SearchEntry mSearchEntry;
 
 
     @Override
@@ -41,6 +47,13 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void initView(){
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mRepoAdapter = new RepoAdapter(this,mSearchEntry);
     }
 
     @Override

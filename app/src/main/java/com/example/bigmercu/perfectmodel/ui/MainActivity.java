@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.bigmercu.perfectmodel.R;
 import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
+import com.example.bigmercu.perfectmodel.entry.SearchEntry;
 import com.example.bigmercu.perfectmodel.presenter.SearchRepoPresenter;
 
 import butterknife.BindView;
@@ -62,12 +63,17 @@ public class MainActivity extends AppCompatActivity implements SearchRepoContrac
     }
 
     @Override
-    public void onGetRepoData() {
+    public void setPresenter(SearchRepoContract.SearchRepoPresenter presenter) {
+        this.mSearchRepoPresenter = presenter;
+    }
+
+    @Override
+    public void onGetRepoData(SearchEntry searchEntry) {
 
     }
 
     @Override
-    public void setPresenter(SearchRepoContract.SearchRepoPresenter presenter) {
-        this.mSearchRepoPresenter = presenter;
+    public void onFiled(String msg) {
+
     }
 }
