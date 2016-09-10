@@ -1,7 +1,7 @@
 # PerfectModel
 Android MVP Perfect Model practice with github APIv3.
 
-> 完成度 61%
+> 完成度 65%
 
 # 引言
 之前看北京GDG直播收获颇丰,这两天抽时间用Github API来实践一下[Piasy](https://github.com/Piasy)提出的完美model.
@@ -38,6 +38,7 @@ Android MVP Perfect Model practice with github APIv3.
 > ![架构图](http://blog.piasy.com/img/201605/perfect_android_model_layer.png)
 
 # 现阶段截图
+![](http://ww4.sinaimg.cn/mw690/b45f56f6gw1f7on1fz5eej20u01hcq9m.jpg)
 ![screenShot](http://ww2.sinaimg.cn/mw690/b45f56f6gw1f7mb4vick5j20u01hcjvr.jpg)
 
 ---
