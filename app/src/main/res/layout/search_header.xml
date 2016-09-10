@@ -18,9 +18,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Repo Name"
         android:ems="10"
-        android:id="@+id/search_content"/>
+        android:id="@+id/search_content"
+        android:hint="Repo Name"/>
 
         <Button
             android:text="Search"

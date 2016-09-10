@@ -22,7 +22,10 @@
             android:layout_height="wrap_content"
             android:text="Bigmercu/AcheckBox"
             android:textSize="20sp"
-            android:id="@+id/name"/>
+            android:id="@+id/name"
+            android:layout_toLeftOf="@+id/linearlayout_name"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,14 +49,15 @@
         </LinearLayout>
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="一个简单的拥有丰富自定义内容的CheckBox多选框"
             android:layout_below="@+id/name"
-            android:textSize="16sp"
             android:paddingTop="8dp"
             android:layout_toLeftOf="@+id/linearlayout_name"
-            android:id="@+id/desc"/>
+            android:id="@+id/desc"
+            android:gravity="left"
+            android:fontFamily="sans-serif-smallcaps"/>
     </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,10 +78,10 @@
                 android:textSize="16sp"
                 android:id="@+id/star"/>
             <ImageView
-                android:layout_height="26dp"
+                android:layout_height="23dp"
                 app:srcCompat="@mipmap/star"
                 android:id="@+id/imageView7"
-                android:layout_width="26dp"/>
+                android:layout_width="23dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -95,8 +99,8 @@
                 android:id="@+id/fork"/>
                 <ImageView
                     android:src="@mipmap/fork"
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"/>
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"/>
             </LinearLayout>
 
         </LinearLayout>

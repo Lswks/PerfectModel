@@ -8,14 +8,12 @@ import android.widget.TextView;
 
 import com.example.bigmercu.perfectmodel.R;
 import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
-import com.example.bigmercu.perfectmodel.entry.SearchEntry;
-import com.example.bigmercu.perfectmodel.presenter.SearchRepoPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements SearchRepoContract.SearchRepoView {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -53,27 +51,12 @@ public class MainActivity extends AppCompatActivity implements SearchRepoContrac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        new SearchRepoPresenter(this);
+//        new SearchRepoPresenter(this);
     }
 
     @OnClick(R.id.button)
     public void setButtonClick(){
         if(mName.getText() != null)
             mSearchRepoPresenter.searchRepo(mEditText.getText().toString());
-    }
-
-    @Override
-    public void setPresenter(SearchRepoContract.SearchRepoPresenter presenter) {
-        this.mSearchRepoPresenter = presenter;
-    }
-
-    @Override
-    public void onGetRepoData(SearchEntry searchEntry) {
-
-    }
-
-    @Override
-    public void onFiled(String msg) {
-
     }
 }

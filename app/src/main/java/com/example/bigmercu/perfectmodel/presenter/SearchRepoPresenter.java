@@ -6,6 +6,12 @@ import com.example.bigmercu.perfectmodel.model.UserInfoModel;
 import com.example.bigmercu.perfectmodel.model.impl.SearchRepoModelImpl;
 import com.socks.library.KLog;
 
+import java.util.List;
+
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
+
 /**
  * Created by bigmercu on 2016/9/8.
  * Email: bigmercu@gmail.com
@@ -35,8 +41,21 @@ public class SearchRepoPresenter implements SearchRepoContract.SearchRepoPresent
 
     @Override
     public void onSuccess(Object entry) {
-        SearchEntry searchEntry = (SearchEntry) entry;
-        KLog.d(searchEntry.toString());
+        Observable.just(entry)
+                .map(new Func1<Object, List<SearchEntry.ItemsBean>>() {
+                    @Override
+                    public List<SearchEntry.ItemsBean> call(Object searchEntry) {
+                        if(searchEntry != null && ((SearchEntry)searchEntry).items() != null){
+                            return ((SearchEntry)searchEntry).items();
+                        }
+                        return null;
+                    }
+                }).subscribe(new Action1<List<SearchEntry.ItemsBean>>() {
+            @Override
+            public void call(List<SearchEntry.ItemsBean> itemsBeen) {
+                mSearchRepoView.onGetRepoData(itemsBeen);
+            }
+        });
     }
 
     @Override

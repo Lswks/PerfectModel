@@ -12,9 +12,16 @@ import android.view.View;
 import com.example.bigmercu.perfectmodel.R;
 import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
+import com.example.bigmercu.perfectmodel.presenter.SearchRepoPresenter;
 import com.example.bigmercu.perfectmodel.ui.adapter.RepoAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.example.bigmercu.perfectmodel.R.id.fab;
 
 public class SearchActivity extends AppCompatActivity implements SearchRepoContract.SearchRepoView {
 
@@ -27,9 +34,12 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
     @BindView(R.id.repos)
     RecyclerView mRecyclerView;
 
+    @BindView(fab)
+    FloatingActionButton mFloatingActionButton;
+
 
     private RepoAdapter mRepoAdapter;
-    private SearchEntry mSearchEntry;
+    private List<SearchEntry.ItemsBean> mItemsBeanList = new ArrayList<>();
 
 
     @Override
@@ -39,21 +49,31 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        ButterKnife.bind(this);
+
+        new SearchRepoPresenter(this);
+
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                mRecyclerView.smoothScrollToPosition(0);
             }
         });
+
+        initView();
     }
 
     private void initView(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-
-        mRepoAdapter = new RepoAdapter(this,mSearchEntry);
+        mRepoAdapter = new RepoAdapter(this,mItemsBeanList);
+        mRecyclerView.setAdapter(mRepoAdapter);
+        mRepoAdapter.setOnItemClickLitener(new RepoAdapter.OnItemClickLitener() {
+            @Override
+            public void OnSearchClick(View view, String data) {
+                mSearchRepoPresenter.searchRepo(data);
+            }
+        });
     }
 
     @Override
@@ -62,8 +82,10 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
     }
 
     @Override
-    public void onGetRepoData(SearchEntry searchEntry) {
-
+    public void onGetRepoData(List<SearchEntry.ItemsBean> s) {
+        mItemsBeanList.clear();
+        mItemsBeanList.addAll(s);
+        mRepoAdapter.notifyDataSetChanged();
     }
 
     @Override

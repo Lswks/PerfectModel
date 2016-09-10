@@ -47,7 +47,7 @@ public class SearchRepoModelImpl implements SearchRepoModel {
     @Override
     public void searchRepoModel(String repoName, final UserInfoModel.onGetDataListener listener) {
 
-        mSearchRepoService.searchRepo("Acheckbox")
+        mSearchRepoService.searchRepo(repoName)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .map(new Func1<ResponseBody, SearchEntry>() {
@@ -67,7 +67,6 @@ public class SearchRepoModelImpl implements SearchRepoModel {
                 .subscribe(new Action1<SearchEntry>() {
                     @Override
                     public void call(SearchEntry searchEntry) {
-                        listener.onSuccess(searchEntry);
                         listener.onSuccess(searchEntry);
                     }
                 }, new Action1<Throwable>() {

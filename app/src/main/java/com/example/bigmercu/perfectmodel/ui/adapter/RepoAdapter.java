@@ -2,7 +2,6 @@ package com.example.bigmercu.perfectmodel.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,8 @@ import android.widget.TextView;
 import com.example.bigmercu.perfectmodel.R;
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
 import com.example.bigmercu.perfectmodel.ui.SearchActivity;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,12 +27,21 @@ import butterknife.OnClick;
 public class RepoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context mContext;
-    private SearchEntry mSearchEntry;
+    private List<SearchEntry.ItemsBean> mItemsBeanList;
+    private OnItemClickLitener mOnSearchListener;
+    private ContentViewHolder mContentViewHolder;
 
-    public RepoAdapter(Context context, SearchEntry searchEntry){
+    public RepoAdapter(Context context, List<SearchEntry.ItemsBean> list){
         this.mContext = context;
-        this.mSearchEntry = searchEntry;
+        this.mItemsBeanList = list;
     }
+
+    public void setOnItemClickLitener(OnItemClickLitener mOnItemClickLitener)
+    {
+        this.mOnSearchListener = mOnItemClickLitener;
+    }
+
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -47,8 +57,26 @@ public class RepoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+       if(holder.getItemViewType() == SearchActivity.VIWE_TYPE_SEARCH){
+           ((SearchHeaderViewHolder) holder).mButton.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   if(!((SearchHeaderViewHolder) holder).mEditText.getText().toString().equals("")){
+                       mOnSearchListener.OnSearchClick(v,((SearchHeaderViewHolder) holder).mEditText.getText().toString());
+                   }
+               }
+           });
+       }else {
+           mContentViewHolder = (ContentViewHolder) holder;
+           mContentViewHolder.mName.setText(mItemsBeanList.get(position-1).owner().login()
+                   + "/" + mItemsBeanList.get(position-1).name());
+           mContentViewHolder.mLanguage.setText(mItemsBeanList.get(position-1).language());
+           mContentViewHolder.mAuthor.setText(mItemsBeanList.get(position-1).owner().login());
+           mContentViewHolder.mDesc.setText(mItemsBeanList.get(position-1).description());
+           mContentViewHolder.mStar.setText(String.valueOf(mItemsBeanList.get(position-1).stargazers_count()));
+           mContentViewHolder.mFork.setText(String.valueOf(mItemsBeanList.get(position-1).forks_count()));
+       }
     }
 
     @Override
@@ -58,7 +86,7 @@ public class RepoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return 0;
+        return mItemsBeanList.size() + 1;
     }
 
     public static class SearchHeaderViewHolder extends RecyclerView.ViewHolder{
@@ -76,9 +104,8 @@ public class RepoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         @OnClick(R.id.search_submit)
         public void Search(){
-            Log.d("RepoAdapter","search");
-        }
 
+        }
     }
 
 
@@ -98,16 +125,17 @@ public class RepoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.author)
         TextView mAuthor;
 
+        @BindView(R.id.name)
+        TextView mName;
+
         public ContentViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
         }
+    }
 
-        @OnClick(R.id.card_rela)
-        public void OnCardClick(){
-            Log.d("RepoAdapter","onclik");
-        }
-
+    public interface OnItemClickLitener{
+        void OnSearchClick(View view,String data);
     }
 
 }
