@@ -16,6 +16,7 @@ Android MVP Perfect Model practice with github APIv3.
 我写的:
 
 [完美Model之AutoValue使用](http://bigmercu.top/2016/09/08/%E5%AE%8C%E7%BE%8EModel%E4%B9%8BAutoValue%E4%BD%BF%E7%94%A8/)
+[完美Model层之sqldelight和sqlBrite使用](http://bigmercu.top/2016/09/09/%E5%AE%8C%E7%BE%8EModel%E5%B1%82%E4%B9%8Bsqldelight%E4%BD%BF%E7%94%A8/)
 
 
 # 用的到repo
