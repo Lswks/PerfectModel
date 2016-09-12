@@ -18,13 +18,11 @@ import com.squareup.sqlbrite.SqlBrite;
 
 import java.io.IOException;
 
-import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -84,17 +82,6 @@ public class UserInfoModelImpl implements UserInfoModel {
     private void  getRemoteData(String name, final onGetDataListener listener){
         mRemoteDataSubscription = mUserInfoService.getUserInfo(name)
                 .subscribeOn(Schedulers.io())
-                .map(new Func1<ResponseBody,GithubUser>() {
-                    @Override
-                    public GithubUser call(ResponseBody responseBody) {
-                        try {
-                            return mGson.fromJson(responseBody.string(), GithubUser.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
                 .doOnNext(new Action1<GithubUser>() {
                     @Override
                     public void call(GithubUser githubUser) {

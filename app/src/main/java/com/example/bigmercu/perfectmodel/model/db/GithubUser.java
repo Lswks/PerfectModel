@@ -4,15 +4,18 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.example.bigmercu.perfectmodel.GithubUserModel;
+import com.example.bigmercu.perfectmodel.util.AutoValueGson_MyAdapterFactory;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.squareup.sqldelight.RowMapper;
 
 /**
  * Created by bigmercu on 2016/9/4.
  * Email: bigmercu@gmail.com
  */
+@JsonAdapter(AutoValueGson_MyAdapterFactory.class)
 @AutoValue
 public abstract class GithubUser implements GithubUserModel {
     public static final Factory<GithubUser> FACTORY = new Factory<>(new Creator<GithubUser>() {

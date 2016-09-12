@@ -1,21 +1,17 @@
 package com.example.bigmercu.perfectmodel.model.impl;
 
+import android.util.Log;
+
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
 import com.example.bigmercu.perfectmodel.model.SearchRepoModel;
 import com.example.bigmercu.perfectmodel.model.UserInfoModel;
 import com.example.bigmercu.perfectmodel.model.api.SearchRepoService;
-import com.example.bigmercu.perfectmodel.util.MyAdapterFactory;
 import com.example.bigmercu.perfectmodel.util.RetrofitClient;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.socks.library.KLog;
 
-import java.io.IOException;
-
-import okhttp3.ResponseBody;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -40,7 +36,7 @@ public class SearchRepoModelImpl implements SearchRepoModel {
 
     public SearchRepoModelImpl() {
         mSearchRepoService = RetrofitClient.getInstance().create(SearchRepoService.class);
-        mGson = new GsonBuilder().registerTypeAdapterFactory(MyAdapterFactory.create()).create();
+        mGson = new Gson();
     }
 
     @SuppressWarnings("unchecked")
@@ -50,23 +46,11 @@ public class SearchRepoModelImpl implements SearchRepoModel {
         mSearchRepoService.searchRepo(repoName)
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
-                .map(new Func1<ResponseBody, SearchEntry>() {
-                    @Override
-                    public SearchEntry call(ResponseBody responseBody) {
-                        try {
-                            StringBuilder str = new StringBuilder();
-                            str.append(responseBody.string());
-                            return mGson.fromJson(str.toString(), SearchEntry.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<SearchEntry>() {
                     @Override
                     public void call(SearchEntry searchEntry) {
+                        Log.d(TAG,searchEntry.toString());
                         listener.onSuccess(searchEntry);
                     }
                 }, new Action1<Throwable>() {

@@ -1,6 +1,7 @@
 package com.example.bigmercu.perfectmodel.model.api;
 
-import okhttp3.ResponseBody;
+import com.example.bigmercu.perfectmodel.entry.SearchEntry;
+
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -13,5 +14,5 @@ import rx.Observable;
 public interface SearchRepoService {
 
     @GET("search/repositories")
-    Observable<ResponseBody> searchRepo(@Query("q") String repo);
+    Observable<SearchEntry> searchRepo(@Query("q") String repo);
 }

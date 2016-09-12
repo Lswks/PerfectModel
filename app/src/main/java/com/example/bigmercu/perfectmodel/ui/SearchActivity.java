@@ -3,7 +3,6 @@ package com.example.bigmercu.perfectmodel.ui;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,20 +13,25 @@ import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
 import com.example.bigmercu.perfectmodel.presenter.SearchRepoPresenter;
 import com.example.bigmercu.perfectmodel.ui.adapter.RepoAdapter;
+import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 import static com.example.bigmercu.perfectmodel.R.id.fab;
 
-public class SearchActivity extends AppCompatActivity implements SearchRepoContract.SearchRepoView {
+public class SearchActivity extends RxAppCompatActivity implements SearchRepoContract.SearchRepoView {
 
     public static final int VIWE_TYPE_SEARCH = 1;
     public static final int VIWE_TYPE_NULL = 2;
     public static final int VIWE_TYPE_CONTENT = 3;
+
+
+    private Unbinder mUnbinder;
 
     private SearchRepoContract.SearchRepoPresenter mSearchRepoPresenter;
 
@@ -49,7 +53,7 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ButterKnife.bind(this);
+        mUnbinder = ButterKnife.bind(this);
 
         new SearchRepoPresenter(this);
 
@@ -92,5 +96,11 @@ public class SearchActivity extends AppCompatActivity implements SearchRepoContr
     public void onFiled(String msg) {
         Snackbar.make(mRecyclerView, msg, Snackbar.LENGTH_LONG)
                 .setAction("GET", null).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
     }
 }

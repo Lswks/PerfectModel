@@ -2,9 +2,11 @@ package com.example.bigmercu.perfectmodel.entry;
 
 import android.support.annotation.Nullable;
 
+import com.example.bigmercu.perfectmodel.util.AutoValueGson_MyAdapterFactory;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.List;
  * Created by bigmercu on 2016/9/7.
  * Email: bigmercu@gmail.com
  */
-
+@JsonAdapter(AutoValueGson_MyAdapterFactory.class)
 @AutoValue
 public abstract class SearchEntry{
 
@@ -22,6 +24,7 @@ public abstract class SearchEntry{
 
     public abstract List<ItemsBean> items();
 
+    @JsonAdapter(AutoValueGson_MyAdapterFactory.class)
     @AutoValue
     public abstract static class ItemsBean {
         public abstract int id();
@@ -96,6 +99,7 @@ public abstract class SearchEntry{
         public abstract double score();
 
 
+        @JsonAdapter(AutoValueGson_MyAdapterFactory.class)
         @AutoValue
         public abstract static class OwnerBean {
             public abstract String login();
