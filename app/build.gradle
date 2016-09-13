@@ -55,5 +55,8 @@ dependencies {
     provided 'com.google.auto.value:auto-value:1.3'
     provided 'com.ryanharter.auto.value:auto-value-gson:0.4.2'
     compile 'com.trello:rxlifecycle:0.7.0'
-    compile 'com.trello:rxlifecycle-components:0.7.0'
+    compile 'com.trello:rxlifecycle-android:0.7.0'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
+    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4'
 }

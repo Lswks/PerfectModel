@@ -3,6 +3,7 @@ package com.example.bigmercu.perfectmodel.ui;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +14,7 @@ import com.example.bigmercu.perfectmodel.contract.SearchRepoContract;
 import com.example.bigmercu.perfectmodel.entry.SearchEntry;
 import com.example.bigmercu.perfectmodel.presenter.SearchRepoPresenter;
 import com.example.bigmercu.perfectmodel.ui.adapter.RepoAdapter;
-import com.trello.rxlifecycle.components.support.RxAppCompatActivity;
+import com.trello.rxlifecycle.android.ActivityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import butterknife.Unbinder;
 
 import static com.example.bigmercu.perfectmodel.R.id.fab;
 
-public class SearchActivity extends RxAppCompatActivity implements SearchRepoContract.SearchRepoView {
+public class SearchActivity extends AppCompatActivity implements SearchRepoContract.SearchRepoView {
 
     public static final int VIWE_TYPE_SEARCH = 1;
     public static final int VIWE_TYPE_NULL = 2;
@@ -55,7 +56,7 @@ public class SearchActivity extends RxAppCompatActivity implements SearchRepoCon
 
         mUnbinder = ButterKnife.bind(this);
 
-        new SearchRepoPresenter(this);
+        new SearchRepoPresenter(this,lifecycle);
 
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +102,8 @@ public class SearchActivity extends RxAppCompatActivity implements SearchRepoCon
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        lifecycle.onNext(ActivityEvent.DESTROY);
         mUnbinder.unbind();
     }
+
 }

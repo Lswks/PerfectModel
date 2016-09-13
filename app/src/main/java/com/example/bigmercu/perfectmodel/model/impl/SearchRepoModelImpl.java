@@ -9,10 +9,13 @@ import com.example.bigmercu.perfectmodel.model.api.SearchRepoService;
 import com.example.bigmercu.perfectmodel.util.RetrofitClient;
 import com.google.gson.Gson;
 import com.socks.library.KLog;
+import com.trello.rxlifecycle.android.ActivityEvent;
+import com.trello.rxlifecycle.android.RxLifecycleAndroid;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 
 /**
  * Created by bigmercu on 2016/9/7.
@@ -41,9 +44,10 @@ public class SearchRepoModelImpl implements SearchRepoModel {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void searchRepoModel(String repoName, final UserInfoModel.onGetDataListener listener) {
+    public void searchRepoModel(String repoName, BehaviorSubject<ActivityEvent> lifecycle, final UserInfoModel.onGetDataListener listener) {
 
         mSearchRepoService.searchRepo(repoName)
+                .compose(RxLifecycleAndroid.<SearchEntry>bindActivity(lifecycle))
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

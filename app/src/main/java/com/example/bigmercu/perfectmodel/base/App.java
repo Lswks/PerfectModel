@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.bigmercu.perfectmodel.util.ContextHolder;
 import com.facebook.stetho.Stetho;
 import com.socks.library.KLog;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Created by bigmercu on 2016/9/4.
@@ -19,6 +20,7 @@ public class App extends Application {
         super.onCreate();
         ContextHolder.initial(this);
         Stetho.initializeWithDefaults(this);
+        LeakCanary.install(this);
         KLog.init(DEBUG, "Bigmercu");
     }
 }
